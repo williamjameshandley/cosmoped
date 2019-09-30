@@ -488,7 +488,7 @@ class DES_like(object):
         D_growth = PKdelta.P(zs, 0.001)
         D_growth = np.sqrt(D_growth / PKdelta.P(0, 0.001))
         h2 = (pars.H0 / 100) ** 2
-        omm = pars.omegab + pars.omegac + pars.omegan
+        omm = pars.omegab + pars.omegac + pars.omeganu
         c = 299792458.
 
         def get_wq():
@@ -616,6 +616,12 @@ class DES_like(object):
             return theory_vec, chi2
         else:
             return chi2
+
+    def ppd_resample(self, theory):
+        new = copy.deepcopy(self)
+        theory_vec = self.make_vector(theory)
+        new.data_vector = np.random.multivariate_normal(theory_vec, self.covmat)
+        return new
 
 
 def convert_txt(filename, root, outdir, ranges=None):
