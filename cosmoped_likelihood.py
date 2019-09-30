@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 def main():
     path='compression_vectors/output/LambdaCDM/'
@@ -92,6 +93,32 @@ class CosMOPED():
         #return log likelihood
         return -0.5*chi_sq
 
+
+    def ppd_resample(self, Dltt, Dlte, Dlee, ellmin=2):
+        new = copy.deepcopy(self)
+
+        # make cl_theory vector from Dltt, Dlte, Dlee
+        ls=np.arange(len(Dltt))+ellmin
+        fac=ls*(ls+1)/(2*np.pi)
+        Cltt=Dltt/fac
+        Clte=Dlte/fac
+        Clee=Dlee/fac
+
+        i_min = self.lmin-ellmin
+        i_maxtt = self.lmaxtt+1-ellmin
+        i_maxteee = self.lmaxteee+1-ellmin
+
+        if self.spectra=='TT':
+            cl_theory = Cltt[i_min:i_maxtt]
+        else:
+            cl_theory = np.concatenate((Cltt[i_min:i_maxtt], Clte[i_min:i_maxteee], Clee[i_min:i_maxteee]))
+
+        #compress cl and generate new compressed data vector
+        for p in self.compression_vector_dict:
+            y_p_theory=self.compression_vector_dict[p].dot(cl_theory)
+            new.compressed_data_dict[p] = np.random.randn() + y_p_theory
+        #return log likelihood
+        return new
 
     def test(self):
         ls, Dltt, Dlte, Dlee = np.genfromtxt('Dl_planck2015fit.dat', unpack=True) #
