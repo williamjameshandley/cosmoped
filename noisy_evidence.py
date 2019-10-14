@@ -103,16 +103,25 @@ def f(x, DES, planck):
     except CAMBError:
         return 1e30
 
+filename =  sys.argv[2] + '_' + sys.argv[1] + '.txt'
+
 print('--------------------------------------------')
-print('true theta:', theta)
+with open(filename, "a") as myfile:
+    print('true theta:', file=myfile)
+
 sol = minimize(f,numpy.random.randn(6), args=(DES,planck),method='Nelder-Mead',options={'initial_simplex':numpy.random.randn(7,6)})
-print('DES+planck theta:' mu + L @ sol.x)
-print('DES+planck logL:' -sol.fun)
+with open(filename, "a") as myfile:
+    print('DES+planck theta:', numpy.array(mu + L @ sol.x), file=myfile)
+    print('DES+planck logL:', -sol.fun, file=myfile)
 
+print('--------------------------------------------')
 sol = minimize(f,numpy.random.randn(6), args=(None,planck),method='Nelder-Mead',options={'initial_simplex':numpy.random.randn(7,6)})
-print('planck theta:' mu + L @ sol.x)
-print('planck logL:' -sol.fun)
+with open(filename, "a") as myfile:
+    print('planck theta:', numpy.array(mu + L @ sol.x), file=myfile)
+    print('planck logL:', -sol.fun, file=myfile)
 
+print('--------------------------------------------')
 sol = minimize(f,numpy.random.randn(6), args=(DES,None),method='Nelder-Mead',options={'initial_simplex':numpy.random.randn(7,6)})
-print('DES theta:' mu + L @ sol.x)
-print('DES logL:' -sol.fun)
+with open(filename, "a") as myfile:
+    print('DES theta:', numpy.array(mu + L @ sol.x), file=myfile)
+    print('DES logL:', -sol.fun, file=myfile)
