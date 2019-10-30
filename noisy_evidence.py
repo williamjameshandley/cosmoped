@@ -7,15 +7,16 @@ import camb
 from anesthetic import NestedSamples
 import sys
 
-DES_samples = NestedSamples(root='/data/will/data/pablo/runs_default/chains/DES')
-planck_samples = NestedSamples(root='/data/will/data/pablo/runs_default/chains/planck')
-DES_planck_samples = NestedSamples(root='/data/will/data/pablo/runs_default/chains/DES_planck')
+
+DES_samples = NestedSamples(root='/rds/user/wh260/hpc-work/pablo/CosmoChord/runs/chains/DES')
+planck_samples = NestedSamples(root='/rds/user/wh260/hpc-work/pablo/CosmoChord/runs/chains/planck')
+DES_planck_samples = NestedSamples(root='/rds/user/wh260/hpc-work/pablo/CosmoChord/runs/chains/DES_planck')
 
 # create a CosMOPED object
 TT2015 = CosMOPED('compression_vectors/output/LambdaCDM/', year=2015, spectra='TT', use_low_ell_bins=True)
 
 # create a DES object
-DESY1 = DES_like('/home/will/Projects/CosmoMC/data/DES/DES_1YR_final.dataset') 
+DESY1 = DES_like('/rds/user/wh260/hpc-work/pablo/CosmoChord/data/DES/DES_1YR_final.dataset') 
 
 
 def random_posterior_sample(samples):
@@ -72,6 +73,7 @@ def loglike(H0, ombh2, omch2, tau, As, ns, DES=None, planck=None):
 
 # Sample from planck posterior
 planck_samples['1e-9A'] = 1e-9*planck_samples['A']
+DES_samples['1e-9A'] = 1e-9*DES_samples['A']
 params = ['H0', 'omegabh2', 'omegach2', 'tau', '1e-9A', 'ns']
 cov = planck_samples[params].cov()
 mu = planck_samples[params].mean()
@@ -79,7 +81,7 @@ L = numpy.linalg.cholesky(cov)
 Linv = numpy.linalg.inv(L)
 
 from scipy.optimize import minimize
-from camb import CAMBError
+#from camb import CAMBError
 
 if sys.argv[1] == '0':
     theta = None
@@ -100,10 +102,10 @@ def f(x, DES, planck):
         l = loglike(*t, DES=DES, planck=planck) 
         print(x,l)
         return -l
-    except CAMBError:
+    except:
         return 1e30
 
-filename =  sys.argv[2] + '_' + sys.argv[1] + '.txt'
+filename =  'data/' + sys.argv[2] + '_' + sys.argv[1] + '.txt'
 
 print('--------------------------------------------')
 with open(filename, "a") as myfile:
