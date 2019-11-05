@@ -10,7 +10,7 @@ import os
 
 
 nested_dir = '/rds/user/wh260/hpc-work/pablo/CosmoChord/runs/chains/'
-DES_data = '/rds/user/wh260/hpc-work/pablo/CosmoChord/data/DES'
+DES_dir = '/rds/user/wh260/hpc-work/pablo/CosmoChord/data/DES'
 
 #nested_dir = '/data/will/data/pablo/runs_default/chains'
 #DES_dir = '/home/will/Projects/CosmoChord/data/DES'
