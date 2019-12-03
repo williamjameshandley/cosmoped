@@ -30,6 +30,15 @@ def random_posterior_sample(samples):
     i = numpy.random.choice(len(samples),p=samples.weight/samples.weight.sum())
     return samples.iloc[i]
 
+def get_des_params(H0, ombh2, omch2, tau, As, ns):
+    pars = camb.CAMBparams()
+    pars.set_for_lmax(2510)
+    pars.set_cosmology(H0=H0, ombh2=ombh2, omch2=omch2, YHe=0.245341, tau=tau)
+    pars.InitPower.set_params(As=As, ns=ns)
+    pars.WantTransfer=True
+    results = camb.get_results(pars)
+    return numpy.concatenate([results.get_sigma8(), [ombh2+omch2/(H0/100)]])
+
 def planck_realization(H0, ombh2, omch2, tau, As, ns):
     pars = camb.CAMBparams()
     pars.set_for_lmax(2510)
@@ -129,17 +138,20 @@ filename =  'data/' + sys.argv[2] + '_' + sys.argv[1] + '.txt'
 
 sol = minimize(f,numpy.random.randn(6), args=(DES,planck),method='Nelder-Mead',options={'initial_simplex':numpy.random.randn(7,6)})
 with open(filename, "a") as myfile:
-    print('DES+planck theta:', numpy.array(planck_mu + planck_L @ sol.x), file=myfile)
+    theta = numpy.array(planck_mu + planck_L @ sol.x)
+    print('DES+planck theta:', numpy.concatenate([theta,get_des_params(*theta)]), file=myfile)
     print('DES+planck logL:', -sol.fun, file=myfile)
 
 print('--------------------------------------------')
 sol = minimize(f,numpy.random.randn(6), args=(None,planck),method='Nelder-Mead',options={'initial_simplex':numpy.random.randn(7,6)})
 with open(filename, "a") as myfile:
-    print('planck theta:', numpy.array(planck_mu + planck_L @ sol.x), file=myfile)
+    theta = numpy.array(planck_mu + planck_L @ sol.x)
+    print('planck theta:', numpy.concatenate([theta,get_des_params(*theta)]), file=myfile)
     print('planck logL:', -sol.fun, file=myfile)
 
 print('--------------------------------------------')
 sol = minimize(f,numpy.random.randn(6), args=(DES,None),method='Nelder-Mead',options={'initial_simplex':numpy.random.randn(7,6)})
 with open(filename, "a") as myfile:
-    print('DES theta:', numpy.array(DES_mu + DES_L @ sol.x), file=myfile)
+    theta = numpy.array(DES_mu + DES_L @ sol.x)
+    print('DES theta:', numpy.concatenate([theta,get_des_params(*theta)]), file=myfile)
     print('DES logL:', -sol.fun, file=myfile)
