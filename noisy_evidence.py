@@ -69,6 +69,9 @@ def loglike(H0, ombh2, omch2, tau, As, ns, DES=None, planck=None):
     pars.set_cosmology(H0=H0, ombh2=ombh2, omch2=omch2, YHe=0.245341, tau=tau)
     pars.InitPower.set_params(As=As, ns=ns)
 
+    if not check_priors(H0, ombh2, omch2, tau, As, ns):
+        return -1e30
+
     if DES is not None:
         results, PKdelta, PKWeyl = DES.get_camb_theory(pars)
         theory = DES.get_theory(pars, results, PKdelta, PKWeyl)
@@ -100,6 +103,31 @@ DES_cov = DES_samples[params].cov()
 DES_mu = DES_samples[params].mean()
 DES_L = numpy.linalg.cholesky(DES_cov)
 DES_Linv = numpy.linalg.inv(DES_L)
+
+# get prior ranges
+ranges = numpy.loadtxt(os.path.join(nested_dir,'DES.ranges'), dtype=object)
+ranges = {x:(float(y),float(z)) for x, y, z in ranges if x in params or x == 'logA'}
+ranges['1e-9A'] = (1e-10 * numpy.exp(ranges['logA'][0]), 1e-10 * numpy.exp(ranges['logA'][1]))
+ranges.pop('logA')
+
+def check_priors(H0, ombh2, omch2, tau, As, ns):
+    if H0 < ranges['H0'][0] or H0 > ranges['H0'][1]:
+        return False
+    elif ombh2 < ranges['omegabh2'][0] or ombh2 > ranges['omegabh2'][1]:
+        return False
+    elif omch2 < ranges['omegach2'][0] or ombh2 > ranges['omegach2'][1]:
+        return False
+    elif tau < ranges['tau'][0] or tau > ranges['tau'][1]:
+        return False
+    elif As < ranges['1e-9A'][0] or As > ranges['1e-9A'][1]:
+        return False
+    elif ns < ranges['ns'][0] or ns > ranges['ns'][1]:
+        return False
+    else:
+        return True
+
+
+
 
 from scipy.optimize import minimize
 #from camb import CAMBError
