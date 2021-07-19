@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "noisy_evidence.py", line 141, in <module>
+    print('DES+planck theta:', numpy.concatenate([theta,get_des_params(*theta)]), file=myfile)
+  File "noisy_evidence.py", line 39, in get_des_params
+    return numpy.concatenate([results.get_sigma8(), [ombh2+omch2/(H0/100)]])
+NameError: name 'results' is not defined

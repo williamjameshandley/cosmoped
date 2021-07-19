@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "noisy_evidence.py", line 149, in <module>
+    planck = planck_realization(*theta_planck[params])
+NameError: name 'theta_planck' is not defined

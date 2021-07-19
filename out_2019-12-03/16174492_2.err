@@ -1,0 +1,1 @@
+/var/spool/slurm/slurmd/job16174578/slurm_script: line 43: 219339 Segmentation fault      (core dumped) python noisy_evidence.py $SLURM_ARRAY_TASK_ID $SLURM_JOB_NAME

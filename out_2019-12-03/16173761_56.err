@@ -1,0 +1,24 @@
+/rds/user/wh260/hpc-work/benjamin/cosmoped/venv/lib/python3.6/site-packages/pandas/core/series.py:1152: FutureWarning: 
+Passing list-likes to .loc or [] with any missing label will raise
+KeyError in the future, you can use .reindex() as an alternative.
+
+See the documentation here:
+https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#deprecate-loc-reindex-listlike
+  return self.loc[key]
+Traceback (most recent call last):
+  File "noisy_evidence.py", line 96, in <module>
+    DES = DES_realization(*theta[params]) 
+  File "noisy_evidence.py", line 44, in DES_realization
+    results, PKdelta, PKWeyl = DESY1.get_camb_theory(pars)
+  File "/rds/user/wh260/hpc-work/benjamin/cosmoped/DES.py", line 390, in get_camb_theory
+    zmax=self.zmax, extrap_kmax=500 * acc)
+  File "/rds/user/wh260/hpc-work/benjamin/cosmoped/venv/lib/python3.6/site-packages/camb/camb.py", line 318, in get_matter_power_interpolator
+    extrap_kmax=extrap_kmax)
+  File "/rds/user/wh260/hpc-work/benjamin/cosmoped/venv/lib/python3.6/site-packages/camb/results.py", line 854, in get_matter_power_interpolator
+    kh, z, pk = self.get_linear_matter_power_spectrum(var1, var2, hubble_units, nonlinear=nonlinear)
+  File "/rds/user/wh260/hpc-work/benjamin/cosmoped/venv/lib/python3.6/site-packages/camb/results.py", line 702, in get_linear_matter_power_spectrum
+    config.check_global_error('get_[non]linear_matter_power_spectrum')
+  File "/rds/user/wh260/hpc-work/benjamin/cosmoped/venv/lib/python3.6/site-packages/camb/_config.py", line 49, in check_global_error
+    raise CAMBError(reference + '%s' % err)
+camb.baseconfig.CAMBError: Error in Fortran called from get_[non]linear_matter_power_spectrum:
+HMCode INTEGRATE, Integration timed out
